@@ -168,7 +168,14 @@ export function MemberList({ members, currentUserId, volumeLevels = {} }: Member
       // Determine the effective voice status based on mute states
       let effectiveStatus = voice_status;
       if (isCurrentUser) {
-        effectiveStatus = storeIsMuted ? 'muted' : voice_status;
+        // For current user, use store mute state as the source of truth
+        if (storeIsMuted) {
+          effectiveStatus = 'muted';
+        } else {
+          // If not muted in store, show actual voice status (speaking or silent)
+          // Ignore any stale muted state from volumeLevels
+          effectiveStatus = voice_status === 'speaking' ? 'speaking' : 'silent';
+        }
       } else {
         if (isLocallyMuted || isSelfMuted) {
           effectiveStatus = 'muted';

@@ -134,7 +134,7 @@ isPreloaded={introVideoLoaded} />
               muted
               playsInline
 
-              className="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 transform object-cover"
+              className="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 transform scale-[1.02] object-cover"
               id="xbox-bg"
               preload="auto"
               src={BACKGROUND_VIDEO_URL}
