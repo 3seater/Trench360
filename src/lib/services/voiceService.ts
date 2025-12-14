@@ -1672,19 +1672,20 @@ export class VoiceService {
 
     try {
       // Create audio track with basic settings
+      // Xbox 360 party chat style: low quality, compressed audio for that nostalgic vibe
       audioTrack = await AgoraRTC.createMicrophoneAudioTrack({
         encoderConfig: {
-          sampleRate: 48000,
+          sampleRate: 16000,  // Low sample rate like Xbox 360
           stereo: false,
-          bitrate: 128,
+          bitrate: 24,        // Low bitrate for that compressed sound
         },
-        AEC: true,
-        ANS: true,
-        AGC: true,
+        AEC: true,   // Keep echo cancellation
+        ANS: false,  // Disable noise suppression for raw audio
+        AGC: true,   // Keep auto gain
       });
 
-      // Apply AI Denoiser if available
-      if (this.aiDenoiserProcessor) {
+      // Skip AI Denoiser for authentic Xbox 360 sound (it was noisy back then!)
+      if (false && this.aiDenoiserProcessor) {
         audioTrack.pipe(this.aiDenoiserProcessor).pipe(audioTrack.processorDestination);
         await this.aiDenoiserProcessor.enable();
         await this.aiDenoiserProcessor.setMode(AIDenoiserProcessorMode.NSNG);
