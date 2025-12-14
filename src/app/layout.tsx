@@ -6,28 +6,28 @@ import { ClientLayout } from '@/components/layouts/ClientLayout';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Chat360',
+  title: 'Trench360',
   description: 'nostalgia, onchain.',
-  metadataBase: new URL('https://chat360.fun'),
+  metadataBase: new URL('https://trench360.netlify.app'),
   openGraph: {
-    title: 'Chat360',
+    title: 'Trench360',
     description: 'nostalgia, onchain.',
     images: [
       {
-        url: '/social-1200px-630px.png',
+        url: '/SITE BANNER.png',
         width: 1200,
         height: 630,
-        alt: 'Chat360 - nostalgia, onchain.',
+        alt: 'Trench360 - nostalgia, onchain.',
       },
     ],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Chat360',
+    title: 'Trench360',
     description: 'nostalgia, onchain.',
-    images: ['/social-1200px-630px.png'],
-    creator: '@chat360fun',
+    images: ['/SITE BANNER.png'],
+    creator: '@trench360',
   },
   icons: {
     icon: [
