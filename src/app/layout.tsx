@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     description: 'nostalgia, onchain.',
     images: [
       {
-        url: '/SITE BANNER.png',
+        url: '/site-banner.png',
         width: 1200,
         height: 630,
         alt: 'Trench360 - nostalgia, onchain.',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Trench360',
     description: 'nostalgia, onchain.',
-    images: ['/SITE BANNER.png'],
+    images: ['/site-banner.png'],
     creator: '@Trench360fun',
   },
   icons: {
