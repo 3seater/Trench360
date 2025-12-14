@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     title: 'Trench360',
     description: 'nostalgia, onchain.',
     images: ['/SITE BANNER.png'],
-    creator: '@trench360',
+    creator: '@Trench360fun',
   },
   icons: {
     icon: [
