@@ -15,8 +15,8 @@ import { UserIcon } from './icons/UserIcon';
 
 const HEADER_CONFIG = {
   COPY_CA_VALUE: '$360',
-  TWITTER_URL: 'https://x.com/chat360fun',
-  CHART_URL: 'https://support.xbox.com/en-US/help/friends-social-activity/parties-chat/how-to-start-a-party',
+  TWITTER_URL: 'https://x.com',
+  CHART_URL: 'https://pump.fun',
 } as const;
 
 const MemoizedUserIcon = React.memo(UserIcon);
@@ -141,7 +141,7 @@ const Logo = React.memo(() => (
   <div className="order-2 flex h-[50px] flex-1 items-center justify-center bg-[#f7ffff] pt-0 sm:order-1 sm:justify-start sm:py-0">
     <div className="flex items-center gap-2 sm:pl-[30px]">
       <MemoizedChat360Icon className="h-14 w-14 text-[#282b2f] opacity-90" />
-      <span className="text-2xl font-semibold text-[#282b2f]">Chat360 Party</span>
+      <span className="text-2xl font-semibold text-[#282b2f]">Trench360 Party</span>
     </div>
   </div>
 ));
