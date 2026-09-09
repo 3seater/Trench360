@@ -82,7 +82,7 @@ export const createPresenceMiddleware = (): StateCreator<Store, [], [], Presence
             status: 'connected',
             currentMember: member,
             members: state.presence.members.size > 0
-              ? new Map([...state.presence.members, [member.id, member]])
+              ? new Map([...Array.from(state.presence.members), [member.id, member] as [string, PartyMember]])
               : new Map([[member.id, member]]),
           },
         }));
