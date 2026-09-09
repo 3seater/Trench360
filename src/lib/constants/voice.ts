@@ -18,7 +18,7 @@ export const VOICE_CONSTANTS = {
   MAX_LOW_AUDIO_COUNT: 3,
 
   // Audio configuration
-  APP_ID: 'b692145dadfd4f2b9bd3c0e9e5ecaab8',
+  APP_ID: '7cb27552662141aea2f6b16da1711926',
   AUDIO_PROFILE: 'high_quality',
   MAX_VOLUME: 1000,
 
