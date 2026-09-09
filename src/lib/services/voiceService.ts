@@ -656,6 +656,22 @@ export class VoiceService {
       this.handleVoiceUpdate(payload as VoiceUpdate);
     });
 
+    // Listen for member announcements — fallback for when Supabase presence
+    // join events don't fire between clients
+    this.broadcastChannel.on('broadcast', { event: 'member_announce' }, ({ payload }) => {
+      if (!payload?.id || payload.id === this.currentMemberId) return;
+      const presenceService = PresenceService.getInstance();
+      const existing = presenceService.getMembers().find((m: { id: string }) => m.id === payload.id);
+      if (!existing) {
+        logger.debug('Adding member from broadcast announcement', {
+          component: 'VoiceService',
+          action: 'member_announce',
+          metadata: { memberId: payload.id },
+        });
+        presenceService.addMemberFromBroadcast(payload);
+      }
+    });
+
     // Subscribe to channel with timeout promise
     try {
       const subscribePromise = this.broadcastChannel.subscribe((status) => {
@@ -836,13 +852,36 @@ export class VoiceService {
                 source: 'voice_service'
             }
         });
+
+        // Also broadcast full member profile so clients that missed the
+        // Supabase presence sync can still display this member in the UI
+        if (state.id === this.currentMemberId) {
+            const presenceMember = PresenceService.getInstance().getCurrentMember();
+            if (presenceMember) {
+                void this.broadcastChannel.send({
+                    type: 'broadcast',
+                    event: 'member_announce',
+                    payload: {
+                        id: presenceMember.id,
+                        name: presenceMember.name,
+                        avatar: presenceMember.avatar,
+                        game: presenceMember.game,
+                        agora_uid: state.agora_uid,
+                        is_active: true,
+                        status: 'active',
+                        created_at: presenceMember.created_at,
+                        last_seen: new Date().toISOString(),
+                    }
+                });
+            }
+        }
     } catch (error) {
         logger.error('Failed to broadcast voice update', {
             component: 'VoiceService',
             action: 'broadcastVoiceUpdate',
             metadata: { error, state }
         });
-        throw error; // Re-throw to allow caller to handle
+        throw error;
     }
   }
 

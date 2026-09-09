@@ -725,6 +725,44 @@ export class PresenceService {
     }
   }
 
+  public addMemberFromBroadcast(data: {
+    id: string;
+    name: string;
+    avatar: string;
+    game: string;
+    agora_uid?: string;
+    is_active?: boolean;
+    status?: string;
+    created_at?: string;
+    last_seen?: string;
+  }): void {
+    if (!data.id || this.members.has(data.id)) return;
+
+    const newMember: PresenceMemberState = {
+      id: data.id,
+      name: data.name || 'Unknown',
+      avatar: data.avatar || '',
+      game: data.game || 'Unknown',
+      agora_uid: data.agora_uid,
+      is_active: true,
+      status: 'active' as const,
+      created_at: data.created_at || new Date().toISOString(),
+      last_seen: data.last_seen || new Date().toISOString(),
+      voice_status: 'silent',
+      muted: false,
+      is_deafened: false,
+      level: 0,
+    };
+
+    this.members.set(data.id, newMember);
+    this.notifyListeners();
+
+    logger.debug('Added member from broadcast announce', {
+      ...LOG_CONTEXT,
+      metadata: { memberId: data.id },
+    });
+  }
+
   public addListener(listener: PresenceListener): void {
     this.listeners.add(listener);
   }
