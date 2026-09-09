@@ -8,13 +8,13 @@ import './globals.css';
 export const metadata: Metadata = {
   title: '$PARTY Chat',
   description: 'on-chain nostalgia, paired to $MSFT',
-  metadataBase: new URL('https://trench360.netlify.app'),
+  metadataBase: new URL('https://partychat.fun'),
   openGraph: {
     title: '$PARTY Chat',
     description: 'on-chain nostalgia, paired to $MSFT',
     images: [
       {
-        url: '/open graph banner.png',
+        url: '/og-banner.png',
         width: 1200,
         height: 630,
         alt: '$PARTY Chat - on-chain nostalgia, paired to $MSFT',
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '$PARTY Chat',
     description: 'on-chain nostalgia, paired to $MSFT',
-    images: ['/open graph banner.png'],
+    images: ['/og-banner.png'],
     creator: '@partychatrh',
   },
   icons: {
