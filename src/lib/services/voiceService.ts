@@ -47,6 +47,7 @@ export class VoiceService {
   private supabase: SupabaseClient;
   private memberIdToAgoraUid: Map<string, string> = new Map();
   private agoraUidToMemberId: Map<string, string> = new Map();
+  private pendingAgoraUids: Set<string> = new Set();
   private currentMemberId: string | null = null;
   private isVadSpeaking: boolean = false;
   private memberMuteStates: Map<string, boolean> = new Map();
@@ -365,22 +366,25 @@ export class VoiceService {
           }
 
           if (!member) {
-            logger.warn('No member found for Agora UID after retries', {
+            logger.warn('No member found for Agora UID after retries, subscribing anyway', {
               component: 'VoiceService',
               action: 'userPublished',
               metadata: {
                 agoraUid: user.uid,
                 retryAttempts: retryCount,
-                availableMembers: PresenceService.getInstance().getMembers().map(m => ({
-                  id: m.id,
-                  agora_uid: m.agora_uid,
-                  currentMappings: {
-                    memberToUid: Array.from(this.memberIdToAgoraUid.entries()),
-                    uidToMember: Array.from(this.agoraUidToMemberId.entries())
-                  }
-                }))
               }
             });
+
+            // Subscribe to audio even without a presence match so voice still works
+            await this.client.subscribe(user, mediaType);
+            if (user.audioTrack) {
+              user.audioTrack.stop();
+              await user.audioTrack.setVolume(100);
+              user.audioTrack.play();
+            }
+
+            // Store as pending — will be resolved when presence syncs
+            this.pendingAgoraUids.add(user.uid.toString());
             return;
           }
 
@@ -1497,6 +1501,22 @@ export class VoiceService {
           const currentUid = this.memberIdToAgoraUid.get(member.id);
           if (currentUid !== member.agora_uid) {
             this.setMemberMapping(member.id, member.agora_uid);
+          }
+        }
+      }
+
+      // Resolve any pending Agora UIDs that arrived before presence synced
+      if (this.pendingAgoraUids.size > 0) {
+        for (const pendingUid of Array.from(this.pendingAgoraUids)) {
+          const matchedMember = members.find(m => m.agora_uid === pendingUid);
+          if (matchedMember) {
+            this.setMemberMapping(matchedMember.id, pendingUid);
+            this.pendingAgoraUids.delete(pendingUid);
+            logger.debug('Resolved pending Agora UID from presence sync', {
+              component: 'VoiceService',
+              action: 'synchronizeMemberMappings',
+              metadata: { pendingUid, memberId: matchedMember.id },
+            });
           }
         }
       }

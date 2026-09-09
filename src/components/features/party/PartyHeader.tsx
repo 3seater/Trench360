@@ -15,7 +15,7 @@ import { UserIcon } from './icons/UserIcon';
 
 const HEADER_CONFIG = {
   COPY_CA_VALUE: '$PARTY',
-  TWITTER_URL: 'https://x.com/Trench360fun',
+  TWITTER_URL: 'https://x.com/partychatrh',
   CHART_URL: 'https://www.ponsfamily.com/',
 } as const;
 

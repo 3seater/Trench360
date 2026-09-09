@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     description: 'on-chain nostalgia, paired to $MSFT',
     images: [
       {
-        url: '/site-banner.png',
+        url: '/open graph banner.png',
         width: 1200,
         height: 630,
         alt: '$PARTY Chat - on-chain nostalgia, paired to $MSFT',
@@ -26,8 +26,8 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: '$PARTY Chat',
     description: 'on-chain nostalgia, paired to $MSFT',
-    images: ['/site-banner.png'],
-    creator: '@Trench360fun',
+    images: ['/open graph banner.png'],
+    creator: '@partychatrh',
   },
   icons: {
     icon: [
