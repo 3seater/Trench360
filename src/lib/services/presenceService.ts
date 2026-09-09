@@ -40,6 +40,7 @@ interface RawPresenceData {
 export class PresenceService {
   private systemChannel: RealtimeChannel | null = null;
   private partyChannel: RealtimeChannel | null = null;
+  private visitorChannel: RealtimeChannel | null = null;
   private currentMember: PresenceMemberState | null = null;
   private members: Map<string, PresenceMemberState> = new Map();
   private persistedMembers: Map<string, PresenceMemberState> = new Map(); // Store persisted member state
@@ -218,6 +219,17 @@ export class PresenceService {
   private async initializePartyChannel(partyId: string): Promise<RealtimeChannel> {
     await ensureRealtimeConnection();
     await this.cleanupExistingPartyChannel();
+
+    // Clean up visitor channel before creating member channel —
+    // they use the same channel name and would conflict
+    if (this.visitorChannel) {
+      try {
+        await this.visitorChannel.unsubscribe();
+      } catch (e) {
+        // ignore
+      }
+      this.visitorChannel = null;
+    }
 
     if (!this.currentMember?.id) {
       throw new Error('Cannot initialize party channel without current member');
@@ -1097,7 +1109,7 @@ export class PresenceService {
         });
       });
 
-      service.partyChannel = channel;
+      service.visitorChannel = channel;
       service.state = { status: 'connected' };
 
       logger.debug('Subscribed as visitor', {
