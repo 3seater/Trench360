@@ -227,6 +227,33 @@ export class PresenceService {
       },
     });
 
+    // Register presence handlers BEFORE subscribing so the initial
+    // sync event (fired during subscription handshake) is never missed
+    channel.on('presence', { event: 'sync' }, () => {
+      const state = channel.presenceState<PresenceMemberState>();
+      void this.syncMembersFromState(state);
+    });
+
+    channel.on('presence', { event: 'join' }, ({ key, newPresences }) => {
+      logger.debug('Member joined', {
+        ...LOG_CONTEXT,
+        metadata: { key, newPresences },
+      });
+      void this.syncMembersFromState(channel.presenceState<PresenceMemberState>());
+    });
+
+    channel.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+      logger.debug('Member left', {
+        ...LOG_CONTEXT,
+        metadata: { key, leftPresences },
+      });
+      const presenceData = (leftPresences as RawPresenceData[]).map((presence) => ({
+        id: presence.id || '',
+        status: presence.status as 'active' | 'idle' | 'left' | undefined,
+      }));
+      void this.handleMemberLeave(presenceData);
+    });
+
     // Subscribe to channel with proper error handling
     await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {
@@ -241,32 +268,6 @@ export class PresenceService {
             logger.debug('Party channel subscribed', {
               ...LOG_CONTEXT,
               metadata: { channelName },
-            });
-
-            // Set up presence handlers
-            channel.on('presence', { event: 'sync' }, () => {
-              const state = channel.presenceState<PresenceMemberState>();
-              void this.syncMembersFromState(state);
-            });
-
-            channel.on('presence', { event: 'join' }, ({ key, newPresences }) => {
-              logger.debug('Member joined', {
-                ...LOG_CONTEXT,
-                metadata: { key, newPresences },
-              });
-              void this.syncMembersFromState(channel.presenceState<PresenceMemberState>());
-            });
-
-            channel.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-              logger.debug('Member left', {
-                ...LOG_CONTEXT,
-                metadata: { key, leftPresences },
-              });
-              const presenceData = (leftPresences as RawPresenceData[]).map((presence) => ({
-                id: presence.id || '',
-                status: presence.status as 'active' | 'idle' | 'left' | undefined,
-              }));
-              void this.handleMemberLeave(presenceData);
             });
 
             // Track current member
@@ -1031,6 +1032,32 @@ export class PresenceService {
         },
       });
 
+      // Register handlers BEFORE subscribing
+      channel.on('presence', { event: 'sync' }, () => {
+        const state = channel.presenceState<PresenceMemberState>();
+        void service.syncMembersFromState(state);
+      });
+
+      channel.on('presence', { event: 'join' }, ({ key, newPresences }) => {
+        logger.debug('Member joined (visitor view)', {
+          ...LOG_CONTEXT,
+          metadata: { key, newPresences },
+        });
+        void service.syncMembersFromState(channel.presenceState<PresenceMemberState>());
+      });
+
+      channel.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+        logger.debug('Member left (visitor view)', {
+          ...LOG_CONTEXT,
+          metadata: { key, leftPresences },
+        });
+        const presenceData = (leftPresences as RawPresenceData[]).map((presence) => ({
+          id: presence.id || '',
+          status: presence.status as 'active' | 'idle' | 'left' | undefined,
+        }));
+        void service.handleMemberLeave(presenceData);
+      });
+
       // Subscribe to channel with proper error handling
       await new Promise<void>((resolve, reject) => {
         const timeout = setTimeout(() => {
@@ -1045,32 +1072,6 @@ export class PresenceService {
               logger.debug('Visitor subscribed to party channel', {
                 ...LOG_CONTEXT,
                 metadata: { channelName },
-              });
-
-              // Set up presence handlers for read-only access
-              channel.on('presence', { event: 'sync' }, () => {
-                const state = channel.presenceState<PresenceMemberState>();
-                void service.syncMembersFromState(state);
-              });
-
-              channel.on('presence', { event: 'join' }, ({ key, newPresences }) => {
-                logger.debug('Member joined (visitor view)', {
-                  ...LOG_CONTEXT,
-                  metadata: { key, newPresences },
-                });
-                void service.syncMembersFromState(channel.presenceState<PresenceMemberState>());
-              });
-
-              channel.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-                logger.debug('Member left (visitor view)', {
-                  ...LOG_CONTEXT,
-                  metadata: { key, leftPresences },
-                });
-                const presenceData = (leftPresences as RawPresenceData[]).map((presence) => ({
-                  id: presence.id || '',
-                  status: presence.status as 'active' | 'idle' | 'left' | undefined,
-                }));
-                void service.handleMemberLeave(presenceData);
               });
 
               // Get initial state after subscribing

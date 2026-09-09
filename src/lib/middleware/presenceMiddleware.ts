@@ -74,16 +74,13 @@ export const createPresenceMiddleware = (): StateCreator<Store, [], [], Presence
           throw result.error;
         }
 
-        // Update state — preserve any members already synced from the initial presence event
+        // Update state — don't overwrite members, the presence listener owns that
         set((state: Store) => ({
           ...state,
           presence: {
             ...state.presence,
             status: 'connected',
             currentMember: member,
-            members: state.presence.members.size > 0
-              ? new Map([...Array.from(state.presence.members), [member.id, member] as [string, PartyMember]])
-              : new Map([[member.id, member]]),
           },
         }));
 
