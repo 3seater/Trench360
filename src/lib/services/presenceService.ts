@@ -129,6 +129,14 @@ export class PresenceService {
       });
     });
 
+    // Only evict members as "left" if the incoming state is non-empty.
+    // An empty state almost always means a timing gap (e.g. right after track()
+    // before Supabase echoes back the full state) — not a real mass-leave event.
+    if (seenMemberIds.size === 0) {
+      this.notifyListeners();
+      return;
+    }
+
     // Handle members not in new state
     Array.from(this.members.keys()).forEach((memberId) => {
       if (!seenMemberIds.has(memberId)) {
