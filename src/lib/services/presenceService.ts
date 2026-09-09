@@ -307,11 +307,20 @@ export class PresenceService {
                 partyId,
               });
 
-              // After track() completes, Supabase sends a sync event with all
-              // current members. Read the state now to catch anyone already present.
-              const currentState = channel.presenceState<PresenceMemberState>();
-              console.log('[PresenceService] Post-track presence state keys:', Object.keys(currentState));
-              this.syncMembersFromState(currentState);
+              // Read presence state immediately after track()
+              const immediateState = channel.presenceState<PresenceMemberState>();
+              console.log('[PresenceService] Post-track presence state keys:', Object.keys(immediateState));
+              this.syncMembersFromState(immediateState);
+
+              // Also schedule a delayed sync — Supabase may not have propagated
+              // all remote presences by the time track() resolves
+              setTimeout(() => {
+                const delayedState = channel.presenceState<PresenceMemberState>();
+                console.log('[PresenceService] Delayed presence state keys:', Object.keys(delayedState));
+                if (Object.keys(delayedState).length > 0) {
+                  this.syncMembersFromState(delayedState);
+                }
+              }, 1000);
             }
             resolve();
           } else if (status === 'CHANNEL_ERROR') {
