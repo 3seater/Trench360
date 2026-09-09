@@ -286,6 +286,12 @@ export class PresenceService {
                 status: 'active',
                 partyId,
               });
+
+              // After track() completes, Supabase sends a sync event with all
+              // current members. Read the state now to catch anyone already present.
+              const currentState = channel.presenceState<PresenceMemberState>();
+              console.log('[PresenceService] Post-track presence state keys:', Object.keys(currentState));
+              this.syncMembersFromState(currentState);
             }
             resolve();
           } else if (status === 'CHANNEL_ERROR') {
@@ -664,14 +670,6 @@ export class PresenceService {
 
       // Always initialize with the main party ID
       await this.initializePartyChannel(MAIN_PARTY_ID);
-
-      // Explicitly sync current presence state after joining — catches
-      // members who were already in the channel before we subscribed
-      if (this.partyChannel) {
-        const currentState = this.partyChannel.presenceState<PresenceMemberState>();
-        console.log('[PresenceService] Post-join presence state keys:', Object.keys(currentState));
-        this.syncMembersFromState(currentState);
-      }
 
       this.state = { status: 'connected' };
       this.notifyListeners();
