@@ -376,7 +376,16 @@ export class VoiceService {
             });
 
             // Subscribe to audio even without a presence match so voice still works
-            await this.client.subscribe(user, mediaType);
+            try {
+              await this.client.subscribe(user, mediaType);
+            } catch (subscribeError) {
+              logger.warn('Failed to subscribe to pending remote user audio', {
+                component: 'VoiceService',
+                action: 'userPublished',
+                metadata: { userId: user.uid, error: subscribeError },
+              });
+              return;
+            }
             if (user.audioTrack) {
               user.audioTrack.stop();
               await user.audioTrack.setVolume(100);
@@ -422,8 +431,17 @@ export class VoiceService {
             return;
           }
 
-          // Subscribe only if not muted
-          await this.client.subscribe(user, mediaType);
+          // Subscribe only if not muted and user is still published
+          try {
+            await this.client.subscribe(user, mediaType);
+          } catch (subscribeError) {
+            logger.warn('Failed to subscribe to remote user audio (may have left)', {
+              component: 'VoiceService',
+              action: 'userPublished',
+              metadata: { userId: user.uid, error: subscribeError },
+            });
+            return;
+          }
 
           if (user.audioTrack) {
             // Ensure clean state
