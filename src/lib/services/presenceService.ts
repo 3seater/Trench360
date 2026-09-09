@@ -67,6 +67,7 @@ export class PresenceService {
   }
 
   private syncMembersFromState(state: RealtimePresenceState<PresenceMemberState>): void {
+    console.log('[PresenceService] syncMembersFromState called, keys:', Object.keys(state));
     logger.debug('Syncing members from state', {
       ...LOG_CONTEXT,
       metadata: { state },
@@ -231,10 +232,12 @@ export class PresenceService {
     // sync event (fired during subscription handshake) is never missed
     channel.on('presence', { event: 'sync' }, () => {
       const state = channel.presenceState<PresenceMemberState>();
+      console.log('[PresenceService] sync event fired, members in state:', Object.keys(state).length);
       void this.syncMembersFromState(state);
     });
 
     channel.on('presence', { event: 'join' }, ({ key, newPresences }) => {
+      console.log('[PresenceService] join event fired, key:', key);
       logger.debug('Member joined', {
         ...LOG_CONTEXT,
         metadata: { key, newPresences },
@@ -569,21 +572,13 @@ export class PresenceService {
   }
 
   private notifyListeners(): void {
-    logger.debug('Notifying listeners', {
-      ...LOG_CONTEXT,
-      metadata: {
-        listenerCount: this.listeners.size,
-        memberCount: this.members.size,
-      },
-    });
-
-    // Get active members that haven't left and ensure all required fields
     const members = Array.from(this.members.values())
         .filter(member => member.status !== 'left' && member.is_active)
         .map(member => ({
             ...member,
             status: member.status || 'active' as MemberStatus,
         }));
+    console.log('[PresenceService] notifyListeners, memberCount:', members.length, 'listenerCount:', this.listeners.size);
 
     // Notify each listener with current state
     this.listeners.forEach((listener) => {
