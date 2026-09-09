@@ -15,14 +15,13 @@ import {
   TrackResult,
 } from '@/lib/types/party/service';
 
-import { AVATARS } from '../constants';
+import { AVATARS, MAIN_PARTY_ID } from '../constants';
 
 const LOG_CONTEXT = { component: 'PresenceService' };
 const MEMBER_STORAGE_KEY = 'party_member';
 const SYSTEM_CHANNEL = 'system';
 const PARTY_CHANNEL_PREFIX = 'party:';
-const UPDATE_DEBOUNCE = 250; // Debounce time for presence updates
-const MAIN_PARTY_ID = 'default'; // Assuming a default party ID
+const UPDATE_DEBOUNCE = 250;
 
 // Type for presence data from Supabase
 interface PresenceData {
@@ -1023,8 +1022,11 @@ export class PresenceService {
       const channel = supabase.channel(channelName, {
         config: {
           broadcast: {
-            self: false,  // Don't broadcast self for visitors
-            ack: false,   // Don't require acks for visitors
+            self: false,
+            ack: false,
+          },
+          presence: {
+            key: 'visitor',
           },
         },
       });

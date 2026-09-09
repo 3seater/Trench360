@@ -63,6 +63,10 @@ export const createPresenceMiddleware = (): StateCreator<Store, [], [], Presence
           },
         }));
 
+        // Register listener BEFORE trackMember so the initial
+        // Supabase presence sync event is not silently dropped
+        setupPresenceListener();
+
         // Track member and wait for result
         const result = await presenceService.trackMember(member);
 
@@ -70,19 +74,18 @@ export const createPresenceMiddleware = (): StateCreator<Store, [], [], Presence
           throw result.error;
         }
 
-        // Update state with tracked member
+        // Update state — preserve any members already synced from the initial presence event
         set((state: Store) => ({
           ...state,
           presence: {
             ...state.presence,
             status: 'connected',
             currentMember: member,
-            members: new Map([[member.id, member]]),
+            members: state.presence.members.size > 0
+              ? new Map([...state.presence.members, [member.id, member]])
+              : new Map([[member.id, member]]),
           },
         }));
-
-        // Set up presence listener
-        setupPresenceListener();
 
         logger.debug('Initialized presence', {
           action: 'initializePresence',
