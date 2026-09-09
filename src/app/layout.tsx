@@ -6,26 +6,26 @@ import { ClientLayout } from '@/components/layouts/ClientLayout';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Trench360',
-  description: 'nostalgia, onchain.',
+  title: '$PARTY Chat',
+  description: 'on-chain nostalgia, paired to $MSFT',
   metadataBase: new URL('https://trench360.netlify.app'),
   openGraph: {
-    title: 'Trench360',
-    description: 'nostalgia, onchain.',
+    title: '$PARTY Chat',
+    description: 'on-chain nostalgia, paired to $MSFT',
     images: [
       {
         url: '/site-banner.png',
         width: 1200,
         height: 630,
-        alt: 'Trench360 - nostalgia, onchain.',
+        alt: '$PARTY Chat - on-chain nostalgia, paired to $MSFT',
       },
     ],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Trench360',
-    description: 'nostalgia, onchain.',
+    title: '$PARTY Chat',
+    description: 'on-chain nostalgia, paired to $MSFT',
     images: ['/site-banner.png'],
     creator: '@Trench360fun',
   },

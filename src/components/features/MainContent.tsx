@@ -18,17 +18,18 @@ const XboxIntro = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="fixed inset-0 z-50 bg-white" />
+      <div className="fixed inset-0 z-50 bg-black" />
     ),
   }
 );
 
 export default function MainContent() {
   const isMobile = useIsMobile();
-  const [showIntro, setShowIntro] = useState(!isMobile);
+  const [showIntro, setShowIntro] = useState(false); // Intro disabled — set to !isMobile to re-enable
   const [videoLoaded, setVideoLoaded] = useState(isMobile);
-  const [showPartyChat, setShowPartyChat] = useState(isMobile);
+  const [showPartyChat, setShowPartyChat] = useState(true);
   const [introVideoLoaded, setIntroVideoLoaded] = useState(false);
+  const [fadeIn, setFadeIn] = useState(false);
 
   // Preload videos sequentially to reduce resource contention
   useEffect(() => {
@@ -36,6 +37,7 @@ export default function MainContent() {
     if (isMobile) {
       setVideoLoaded(true);
       setShowPartyChat(true);
+      setFadeIn(true);
       return;
     }
 
@@ -44,23 +46,19 @@ export default function MainContent() {
 
     const preloadVideo = async (url: string, onLoad: () => void) => {
       try {
-        // Create a video element for preloading
         const video = document.createElement('video');
         video.preload = 'auto';
         video.muted = true;
         video.playsInline = true;
 
-        // Create a promise that resolves when enough data is loaded
         const loadPromise = new Promise<void>((resolve, reject) => {
           video.oncanplaythrough = () => resolve();
           video.onerror = () => reject(video.error);
         });
 
-        // Start loading
         video.src = url;
         video.load();
 
-        // Wait for enough data or timeout after 10s
         await Promise.race([
           loadPromise,
           new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
@@ -79,14 +77,18 @@ export default function MainContent() {
             },
           });
         }
+        // Fade in anyway on error so the site doesn't stay black
+        if (mounted) setFadeIn(true);
       }
     };
 
-    // Load intro video first, then background
     const loadSequentially = async () => {
       await preloadVideo(INTRO_VIDEO_URL, () => setIntroVideoLoaded(true));
       if (mounted) {
-        await preloadVideo(BACKGROUND_VIDEO_URL, () => setVideoLoaded(true));
+        await preloadVideo(BACKGROUND_VIDEO_URL, () => {
+          setVideoLoaded(true);
+          setFadeIn(true);
+        });
       }
     };
 
@@ -107,13 +109,14 @@ export default function MainContent() {
   };
 
   return (
-    <div className="fixed inset-0 min-h-screen overflow-hidden bg-white">
+    <div className="fixed inset-0 min-h-screen overflow-hidden bg-black">
       {showIntro && !isMobile ? (
-        <XboxIntro onIntroEndAction={handleIntroEnd}
-
-isPreloaded={introVideoLoaded} />
+        <XboxIntro onIntroEndAction={handleIntroEnd} isPreloaded={introVideoLoaded} />
       ) : (
-        <main className="relative h-full w-full">
+        <main
+          className="relative h-full w-full transition-opacity duration-700"
+          style={{ opacity: fadeIn ? 1 : 0 }}
+        >
           <div className="absolute inset-0 z-0">
             <video
               style={{
@@ -121,19 +124,16 @@ isPreloaded={introVideoLoaded} />
                 willChange: 'transform',
                 backfaceVisibility: 'hidden',
               }}
-
               onError={() => {
                 logger.error('Video playback error', {
                   action: 'videoPlayback',
                   metadata: { elementId: 'xbox-bg', url: BACKGROUND_VIDEO_URL },
                 });
               }}
-
               autoPlay
               loop
               muted
               playsInline
-
               className="absolute left-1/2 top-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 transform scale-[1.01] object-cover"
               id="xbox-bg"
               preload="auto"
@@ -145,7 +145,7 @@ isPreloaded={introVideoLoaded} />
 
           <div className="absolute inset-0 z-10 bg-black opacity-55" />
 
-          <div className={`absolute inset-0 z-20 flex items-center justify-center transition-opacity duration-500 ${showPartyChat ? 'opacity-100' : 'opacity-0'}`}>
+          <div className="absolute inset-0 z-20 flex items-center justify-center">
             <PartyChat />
           </div>
         </main>

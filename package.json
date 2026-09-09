@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "dotenv -e .env.local -- next dev",
+    "dev": "dotenv -e .env.local -- next dev --turbopack",
     "dev:debug": "dotenv -e .env.local -- NODE_OPTIONS='--inspect' next dev",
     "build": "NODE_ENV=production next build",
     "start": "NODE_ENV=production next start",

@@ -114,7 +114,7 @@ export function MemberList({ members, currentUserId, volumeLevels = {} }: Member
           role="status"
           style={{ animationDelay: '150ms', animationFillMode: 'forwards' }}
         >
-          <span className="p-10 text-base text-[#282b2f]">nostalgia, onchain.</span>
+          <span className="p-10 text-base text-[#282b2f]">on-chain nostalgia, paired to $MSFT</span>
         </div>
       );
     }

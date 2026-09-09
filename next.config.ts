@@ -68,9 +68,6 @@ const nextConfig: NextConfig = {
     return config;
   },
   modularizeImports: {
-    'lucide-react': {
-      transform: 'lucide-react/dist/esm/icons/{{member}}',
-    },
     '@radix-ui/react-*': {
       transform: '@radix-ui/react-{{member}}',
     },

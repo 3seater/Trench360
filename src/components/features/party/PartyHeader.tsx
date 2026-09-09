@@ -14,9 +14,9 @@ import { Chat360Icon } from './icons/Chat360Icon';
 import { UserIcon } from './icons/UserIcon';
 
 const HEADER_CONFIG = {
-  COPY_CA_VALUE: '$360',
+  COPY_CA_VALUE: '$PARTY',
   TWITTER_URL: 'https://x.com/Trench360fun',
-  CHART_URL: 'https://pump.fun',
+  CHART_URL: 'https://www.ponsfamily.com/',
 } as const;
 
 const MemoizedUserIcon = React.memo(UserIcon);
@@ -141,7 +141,7 @@ const Logo = React.memo(() => (
   <div className="order-2 flex h-[50px] flex-1 items-center justify-center bg-[#f7ffff] pt-0 sm:order-1 sm:justify-start sm:py-0">
     <div className="flex items-center gap-2 sm:pl-[30px]">
       <MemoizedChat360Icon className="h-14 w-14 text-[#282b2f] opacity-90" />
-      <span className="text-2xl font-semibold text-[#282b2f]">Trench360 Party</span>
+      <span className="text-2xl font-semibold text-[#282b2f]">$PARTY Chat</span>
     </div>
   </div>
 ));
