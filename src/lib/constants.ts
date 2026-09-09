@@ -4,7 +4,7 @@ const INTRO_VIDEO_URL = '/intro.mp4';
 
 const STATUSES = [
   'Trenching',
-  'Memescope',
+  'The Scope',
   'Farming Copytraders',
   'Wallet Tracking',
   'Scanning',
@@ -14,10 +14,9 @@ const STATUSES = [
   'Tax Evading',
   'Perps Trading',
   'Shitposting',
-  'Retiring Early',
   'PNL Flexing',
   'Larping',
-  'Engagement Farmin',
+  'Engagement Farming',
   'Top Blasting',
 ];
 

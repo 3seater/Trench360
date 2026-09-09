@@ -43,7 +43,7 @@ const HeaderButton = React.memo(({
     <button
       onClick={onClick}
 
-      className={`relative flex cursor-pointer items-center justify-center bg-[#6B717D] transition-colors ${width} ${children ? 'h-[35px] sm:h-[50px]' : 'h-[35px] sm:h-[50px]'} group overflow-hidden`}
+      className={`relative flex cursor-pointer items-center justify-center bg-[#6B717D] transition-colors focus:outline-none ${width} ${children ? 'h-[35px] sm:h-[50px]' : 'h-[35px] sm:h-[50px]'} group overflow-hidden`}
     >
       <div className="absolute inset-0 shadow-[inset_0_-1px_1px_rgba(0,0,0,0.05)]"></div>
       <div className="absolute bottom-0 left-0 top-0 w-[1px] bg-[#5D626D]/50"></div>
