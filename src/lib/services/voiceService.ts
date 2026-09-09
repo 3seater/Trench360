@@ -947,6 +947,18 @@ export class VoiceService {
         // Set up member mapping with new Agora UID
         this.setMemberMapping(memberId, uid);
 
+        // Update presence channel tracking with agora_uid so other users
+        // can match this Agora UID to this presence member
+        const presenceService = PresenceService.getInstance();
+        const currentMember = presenceService.getCurrentMember();
+        if (currentMember && presenceService['partyChannel']) {
+          void presenceService['partyChannel'].track({
+            ...currentMember,
+            agora_uid: uid.toString(),
+            last_seen: new Date().toISOString(),
+          });
+        }
+
         // Set joined state before broadcasting initial state
         this._isJoined = true;
 
