@@ -15,8 +15,8 @@ import { UserIcon } from './icons/UserIcon';
 
 const HEADER_CONFIG = {
   COPY_CA_VALUE: '$PARTY',
-  TWITTER_URL: 'https://x.com/partychatrh',
-  CHART_URL: 'https://www.ponsfamily.com/',
+  TWITTER_URL: 'https://x.com/partychatt',
+  CHART_URL: 'https://www.stonkfun.xyz',
 } as const;
 
 const MemoizedUserIcon = React.memo(UserIcon);

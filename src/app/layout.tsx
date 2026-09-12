@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     title: '$PARTY Chat',
     description: 'join the party. earn $MSFT',
     images: ['/og-banner.png'],
-    creator: '@partychatrh',
+    creator: '@partychatt',
   },
   icons: {
     icon: [
