@@ -7,17 +7,17 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: '$PARTY Chat',
-  description: 'on-chain nostalgia, paired to $MSFT',
+  description: 'join the party. earn $MSFT',
   metadataBase: new URL('https://partychat.fun'),
   openGraph: {
     title: '$PARTY Chat',
-    description: 'on-chain nostalgia, paired to $MSFT',
+    description: 'join the party. earn $MSFT',
     images: [
       {
         url: '/og-banner.png',
         width: 1200,
         height: 630,
-        alt: '$PARTY Chat - on-chain nostalgia, paired to $MSFT',
+        alt: '$PARTY Chat - join the party. earn $MSFT',
       },
     ],
     type: 'website',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: '$PARTY Chat',
-    description: 'on-chain nostalgia, paired to $MSFT',
+    description: 'join the party. earn $MSFT',
     images: ['/og-banner.png'],
     creator: '@partychatrh',
   },
